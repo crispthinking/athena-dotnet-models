@@ -47,7 +47,7 @@ jobs:
 
       - name: Publish NuGet Packages to GitHub Packages
         if: github.event_name == 'release' || inputs.publish-to-github
-        run: dotnet nuget push bin/artifacts/**/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
+        run: dotnet nuget push bin/artifacts/**/*.nupkg --api-key ${{ github.token }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
 
       - name: Publish NuGet package to NuGet.org
         if: github.event_name == 'release' || inputs.publish-to-nuget
