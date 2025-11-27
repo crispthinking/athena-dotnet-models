@@ -5,18 +5,8 @@ on:
     types:
       - published
   workflow_dispatch:
-    inputs:
-      publish-to-nuget:
-        description: 'Publish pre-release to NuGet.org (for end-to-end testing)'
-        required: false
-        type: boolean
-        default: false
-      publish-to-github:
-        description: 'Publish to GitHub Packages'
-        required: false
-        type: boolean
-        default: true
 
+# Set permissions for the workflow.
 permissions:
   contents: write
   packages: write
@@ -30,26 +20,17 @@ jobs:
   publish:
     runs-on: ubuntu-22.04
     needs: build
-    permissions:
-      packages: write
-      contents: read
     steps:
       - name: Download Package
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: artifacts
           path: bin/artifacts/
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 9.0.x
-
       - name: Publish NuGet Packages to GitHub Packages
-        if: github.event_name == 'release' || inputs.publish-to-github
-        run: dotnet nuget push bin/artifacts/**/*.nupkg --api-key ${{ github.token }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
+        run: dotnet nuget push bin/artifacts/**/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
 
-      - name: Publish NuGet package to NuGet.org
-        if: github.event_name == 'release' || inputs.publish-to-nuget
+      - name: Publish NuGet package
+        if: github.event_name == 'release'
         run: |
           dotnet nuget push bin/artifacts/**/*.nupkg --api-key "${{ secrets.NUGET_APIKEY }}" --source "https://api.nuget.org/v3/index.json" --skip-duplicate
