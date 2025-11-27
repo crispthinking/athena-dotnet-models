@@ -4,17 +4,25 @@ on:
   push:
     branches:
       - main
+      - feature/**
+      - feat/**
+      - hotfix/**
+      - hotfixes/**
   pull_request:
     branches:
       - main
   workflow_dispatch:
   workflow_call:
+    outputs:
+      is-prerelease:
+        description: "Whether the built packages are pre-release versions"
+        value: ${{ jobs.build.outputs.is-prerelease }}
 
 permissions:
   contents: write
   pull-requests: write
   checks: write
-  packages: read
+  packages: write
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
@@ -24,6 +32,8 @@ env:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    outputs:
+      is-prerelease: ${{ steps.check-prerelease.outputs.is-prerelease }}
     strategy:
       fail-fast: false
       matrix:
@@ -52,9 +62,42 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-22.04' }}
         run: dotnet pack Resolver.Athena.Grpc.slnx --configuration Release --no-build --output Artifacts
 
+      - name: Check if pre-release
+        id: check-prerelease
+        if: ${{ matrix.os == 'ubuntu-22.04' }}
+        shell: bash
+        run: |
+          # Check if any .nupkg file contains a pre-release suffix (e.g., -beta, -alpha, -rc)
+          if ls Artifacts/*.nupkg 2>/dev/null | head -1 | grep -qE '\-[a-zA-Z]+\.' ; then
+            echo "is-prerelease=true" >> $GITHUB_OUTPUT
+            echo "Pre-release packages detected"
+          else
+            echo "is-prerelease=false" >> $GITHUB_OUTPUT
+            echo "Stable release packages detected"
+          fi
+
       - name: Upload NuGet packages
         if: ${{ matrix.os == 'ubuntu-22.04' }}
         uses: actions/upload-artifact@v5
         with:
           name: artifacts
           path: Artifacts/*.nupkg
+
+  publish-prerelease:
+    if: ${{ github.event_name == 'push' && github.ref != 'refs/heads/main' }}
+    runs-on: ubuntu-22.04
+    needs: build
+    steps:
+      - name: Download Package
+        uses: actions/download-artifact@v5
+        with:
+          name: artifacts
+          path: bin/artifacts/
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Publish Pre-release to GitHub Packages
+        run: dotnet nuget push bin/artifacts/**/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
