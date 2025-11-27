@@ -3,13 +3,13 @@ mode: ContinuousDelivery
 branches:
   master:
     regex: ^main$
-    label: ''           # No pre-release tag for main branch.
+    label: ''
   hotfix:
     regex: ^hotfix(es)?[/-]
     mode: ContinuousDelivery
     increment: None
-    label: beta         # Pre-release tag for hotfix branches.
+    label: beta
   feature:
     regex: ^(feature|feat)[/-]
-    label: beta        # Pre-release tag for feature branches.
+    label: beta
     mode: ContinuousDelivery

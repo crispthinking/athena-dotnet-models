@@ -23,7 +23,6 @@
     <PackageTags>athena;csam;detection;resolver;image-classification;grpc;protobuf</PackageTags>
   </PropertyGroup>
 
-  <!-- Include README.md in all packages -->
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)../README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
