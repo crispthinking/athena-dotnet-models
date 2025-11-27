@@ -17,9 +17,9 @@
     <Copyright>Copyright (c) 2025 Crisp Thinking Group Ltd</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/crispthinking/athena-protobufs-dotnet</RepositoryUrl>
+    <RepositoryUrl>https://github.com/crispthinking/athena-dotnet-models</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageProjectUrl>https://github.com/crispthinking/athena-protobufs-dotnet</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/crispthinking/athena-dotnet-models</PackageProjectUrl>
     <PackageTags>athena;csam;detection;resolver;image-classification;grpc;protobuf</PackageTags>
   </PropertyGroup>
 
