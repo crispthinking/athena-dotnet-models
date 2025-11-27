@@ -30,6 +30,9 @@ jobs:
   publish:
     runs-on: ubuntu-22.04
     needs: build
+    permissions:
+      packages: write
+      contents: read
     steps:
       - name: Download Package
         uses: actions/download-artifact@v5
