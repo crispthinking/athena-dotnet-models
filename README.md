@@ -8,6 +8,7 @@
 |---------|-------------|
 | `ResolverAthena.Grpc.Client` | Generated gRPC client for the Resolver Athena API |
 | `ResolverAthena.Grpc.Models` | Generated gRPC models/messages for the Resolver Athena API |
+| `ResolverAthena.Grpc.Server` | Generated gRPC server base classes for the Resolver Athena API |
 
 ## Installation
 
@@ -19,6 +20,12 @@ Or for just the models:
 
 ```bash
 dotnet add package ResolverAthena.Grpc.Models
+```
+
+Or if you're implementing the server:
+
+```bash
+dotnet add package ResolverAthena.Grpc.Server
 ```
 
 ## Building
