@@ -1,10 +1,10 @@
-name: Publish Resolver.Athena.Grpc Packages
+name: Publish Resolver.Athena Packages
 
 on:
   release:
     types:
-      - published
-  workflow_dispatch:
+      - published # Run the workflow when a new GitHub release is published
+  workflow_dispatch: # Allow manual triggering from the GitHub UI
 
 # Set permissions for the workflow.
 permissions:
@@ -16,18 +16,10 @@ permissions:
 jobs:
   build:
     uses: ./.github/workflows/ci.yml
-    permissions:
-      contents: write
-      packages: write
-      checks: write
-      pull-requests: write
 
   publish:
     runs-on: ubuntu-22.04
     needs: build
-    permissions:
-      contents: write
-      packages: write
     steps:
       - name: Download Package
         uses: actions/download-artifact@v6
